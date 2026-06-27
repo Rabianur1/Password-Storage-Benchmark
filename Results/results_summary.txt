@@ -1,0 +1,27 @@
+--------FILE ORGANIZATION PROJECT BENCHMARK RESULTS--------
+
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+| Method          | Disk Size       | Avg Search (us) | Std Dev (us)    | Max Search (us) | CPU Usage       | RAM Usage       |
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+| Raw Storage     | 9.30 MB         | 862.84          | 519.77          | 1755.40         | %3.23           | 4.43   MB       |
+| Hashed Storage  | 33.04 MB        | 55.98           | 4.48            | 77.90           | %9.83           | 4.43   MB       |
+| Compressed      | 3.53 MB         | 35.20           | 20.21           | 75.00           | %3.64           | 4.20   MB       |
++-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+-----------------+
+
+ADDITIONAL METRICS:
+ - Compression Ratio (Compressed / Raw): 0.3797
+ - Decompression Time: 42.04 ms
+
+EVALUATION AND COMPARISON:
+1. SPEED (Search Time): Hashed Storage provides the fastest direct lookup (avg 55 us) because it uses
+   Binary Search without loading the whole file. While Compressed Storage might seem faster (avg 35 us),
+   this is only because it searches entirely in RAM *after* a massive 42.04 ms decompression penalty.
+   Raw Storage is the slowest method due to its reliance on linear disk reading.
+
+2. DISK USAGE: Compressed Storage occupies the least disk space (3.53 MB) thanks to the zlib algorithm.
+   Hashed Storage is the most disadvantageous in terms of disk space (33.04 MB) due to the 32-character
+   length of MD5 hashes.
+
+3. RAM AND CPU: Since the Compressed method requires decompression into memory before searching (42.04 ms),
+   it incurs additional time and RAM overhead, especially during the first run. While Raw storage reads directly
+   from the disk, Hashed storage requires instantaneous CPU processing power to calculate the MD5 hash before searching.
